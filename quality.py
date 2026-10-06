@@ -11,15 +11,6 @@ def loadCMAPSS(dataset : str):
     # Reads datapoints, splitting columns on any length of whitespace.
     return [trainData, testData, rulData]
 
-def driftVsNoise(data: pd.DataFrame, n=10):
-    cols = data.columns[2:]
-    g = data.groupby("unit number")
-    drift = (g[cols].apply(lambda d: d.tail(n).mean() - d.head(n).mean())).mean()
-    # A measure of how much the average of each column changes between the initial and final values.
-    noise = g[cols].apply(lambda d: d.head(n).std()).mean()
-    # A measure of how much the values at the beginning of each column vary on average.
-    return (drift.abs() / (noise + 1e-9)).sort_values()
-
 def checkIsMissing(data : pd.DataFrame):
     return data.isna().sum()
 
@@ -37,7 +28,7 @@ def checkCycleContinuity(df : pd.DataFrame):
 def checkConsistency(train: pd.DataFrame, test: pd.DataFrame, rul: pd.DataFrame):
     return {
         "rulTestMatch" : set(test["unit number"]) == set(range(1, len(rul) + 1)),
-        "noMissing Rul" : checkIsMissing(rul) == 0,
+        "noMissingRul" : checkIsMissing(rul) == 0,
         "rulPositive" : bool((rul["RUL"] > 0).all())
         }
 
@@ -51,4 +42,31 @@ def summariseColumns(train: pd.DataFrame):
     summary["relStd"] = summary["std"] / summary["mean"].abs()
     return summary.round(4)
 
-    
+def driftVsNoise(data: pd.DataFrame, n=10):
+    cols = data.columns[2:]
+    g = data.groupby("unit number")
+    drift = (g[cols].apply(lambda d: d.tail(n).mean() - d.head(n).mean())).mean()
+    # A measure of how much the average of each column changes between the initial and final values.
+    noise = g[cols].apply(lambda d: d.head(n).std()).mean()
+    # A measure of how much the values at the beginning of each column vary on average.
+    return (drift.abs() / (noise + 1e-9)).sort_values()
+
+
+def getDataSetInfo(dataset: str):
+    trainData, testData, rulData = loadCMAPSS(dataset)
+    consistencyInfo = checkConsistency(trainData, testData, rulData)
+    return {
+        "trainDataIsMissing" : checkIsMissing(trainData),
+        "testDataIsMissing" : checkIsMissing(testData),
+        "duplicateTrainData" : checkDuplicates(trainData),
+        "duplicateTestData" : checkDuplicates(testData),
+        "trainEngineLifetimes" : engineLifetimes(trainData),
+        "testEngineLifetimes" : engineLifetimes(testData),
+        "trainIsContinuous" : checkCycleContinuity(trainData),
+        "testIsContinuous" : checkCycleContinuity(testData),
+        "rulTestMatch" : consistencyInfo.get("rulTestMatch"),
+        "noMissingRul" : consistencyInfo.get("noMissingRul"),
+        "rulPositive" : consistencyInfo.get("rulPositive"),
+        "driftVsNoiseTrain": driftVsNoise(trainData)
+        
+    }

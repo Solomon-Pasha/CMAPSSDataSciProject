@@ -14,7 +14,7 @@ if testData.shape != (13096, 26):
     raise ValueError(f"Test data shape is {testData.shape}, expected (13096, 26)")
 
 print(qual.checkConsistency(trainData, testData, rulData))
-print(qual.engineLifetimes(trainData))
+print(qual.driftVsNoise(trainData))
 trainData.to_csv('outputData/train_FD001.csv', index=False)
 testData.to_csv('outputData/test_FD001.csv', index=False)
 rulData.to_csv('outputData/RUL_FD001.csv', index=False)

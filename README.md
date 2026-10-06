@@ -1,5 +1,7 @@
 A python data analysis project for the CMAPSS data (https://data.nasa.gov/docs/legacy/CMAPSSData.zip). Aiming to find out what changes in which sensors correlate with engine failure.
 
+I have written several functions in the quality.py file to check for any issues in the existing data and ensure its integrity, including ensuring that the test data and its real results match exactly in length and ids as well as checking that there are no empty rows or duplicate records to unnecessarily bias the analysis.
+
 To filter out columns which may have no major change over any engines lifespan and thus be effectively irrelevant to finding what foreshadows an engine nearing RUL I used the noise_vs_drift function, which analyses which columns actually change over a engines lifespan.
 
 I used the describe function to generate some basic information on the dataset in the form of the following table
@@ -29,5 +31,31 @@ sensor measurement19,100.0,0.0,100.0,100.0,1,0.0
 sensor measurement20,38.8163,0.1807,38.14,39.43,120,0.0047
 sensor measurement21,23.2897,0.1083,22.8942,23.6184,4745,0.0046
 
+Due to this information and the folowing gathered from the drift_vs_noise function:
+operational setting3    0.000000
+sensor measurement1     0.000000
+sensor measurement19    0.000000
+sensor measurement5     0.000000
+sensor measurement18    0.000000
+sensor measurement16    0.000000
+sensor measurement10    0.000000
+operational setting2    0.021679
+operational setting1    0.056523
+sensor measurement6     0.432965
+sensor measurement3     3.784618
+sensor measurement17    4.166703
+sensor measurement2     4.290318
+sensor measurement21    4.492123
+sensor measurement20    4.821273
+sensor measurement15    4.982505
+sensor measurement8     5.451500
+sensor measurement13    5.595825
+sensor measurement7     5.935123
+sensor measurement4     6.233772
+sensor measurement12    6.777548
+sensor measurement11    7.516827
+sensor measurement14    9.399881
+sensor measurement9     9.660201
+I decided to ignore columns 3, 4, 5, 6, 24, 10, 23, 21 and 15 in my model because they are effectively constant and thus would simply waste space in the model. Any changes in them are either random noise or imperceptibly different from random noise. While columns 3 and 4 displayed high relative standard deviation, this was primarily due to their extremely small mean being inordinately effected by minor fluctuations revealed when noise and deviation are compared.
 
 Notably the datasets readme.txt file is inconsistent in it's notation, the second number resets between operational setting 3 and sensor measurement 1 but the final sensor measurement is labelled 26 when it should be 21.
