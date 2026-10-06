@@ -49,6 +49,6 @@ def summariseColumns(train: pd.DataFrame):
     summary = train[cols].describe().T[["mean", "std", "min", "max"]]
     summary["unique"] = train[cols].nunique()
     summary["relStd"] = summary["std"] / summary["mean"].abs()
-    return summary
+    return summary.round(4)
 
     
