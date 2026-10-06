@@ -1,12 +1,21 @@
 import pandas as pd
+import quality as qual
 
 
-cols = ['unit number', 'time in cycles'] + ["operational setting" + str(i) for i in range(1, 4)] + ["sensor measurement" + str(i) for i in range(1, 22)]
-# Defines the column names for the dataset.
+                
+trainData, testData, rulData = qual.loadCMAPSS("FD001")
 
-trainData = pd.read_csv('CMAPSSData/train_FD001.txt', sep=r"\s+", header=None, names=cols, index_col=False)
-testData = pd.read_csv('CMAPSSData/test_FD001.txt', sep=r"\s+", header=None, names=cols, index_col=False)
-rulData = pd.read_csv('CMAPSSData/RUL_FD001.txt', sep=r"\s+", header=None, names=['RUL'], index_col=False)
-# Reads datapoints, splitting columns on any length of whitespace.
 
-trainData.to_csv('CMAPSSData/train_FD001.csv', index=False)
+
+# Verifies the data matches what is expected.
+if trainData.shape != (20631, 26):
+    raise ValueError(f"Train data shape is {trainData.shape}, expected (20631, 26)")
+if testData.shape != (13096, 26):
+    raise ValueError(f"Test data shape is {testData.shape}, expected (13096, 26)")
+
+print(qual.checkConsistency(trainData, testData, rulData))
+print(qual.engineLifetimes(trainData))
+trainData.to_csv('outputData/train_FD001.csv', index=False)
+testData.to_csv('outputData/test_FD001.csv', index=False)
+rulData.to_csv('outputData/RUL_FD001.csv', index=False)
+qual.summariseColumns(trainData).to_csv('outputData/trainSummary_FD001.csv')
