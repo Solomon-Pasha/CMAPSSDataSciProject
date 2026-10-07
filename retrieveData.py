@@ -1,5 +1,7 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 import quality as qual
+import process as proc
 
 
                 
@@ -13,9 +15,13 @@ if trainData.shape != (20631, 26):
 if testData.shape != (13096, 26):
     raise ValueError(f"Test data shape is {testData.shape}, expected (13096, 26)")
 
-print(qual.checkConsistency(trainData, testData, rulData))
-print(qual.driftVsNoise(trainData))
-trainData.to_csv('outputData/train_FD001.csv', index=False)
-testData.to_csv('outputData/test_FD001.csv', index=False)
-rulData.to_csv('outputData/RUL_FD001.csv', index=False)
-qual.summariseColumns(trainData).to_csv('outputData/trainSummary_FD001.csv')
+metadata = qual.getDataSetInfo("FD001")
+print(proc.remainingLife(trainData).groupby("unit number")["RUL"].max())
+print(metadata.get("trainEngineLifetimes"))
+# check that the highest cycle count difference in the data is exactly the number of data points - 1.
+print(proc.remainingLife(trainData).groupby("unit number")["RUL"].min())
+
+# z = proc.displayRemainingVsVars(proc.remainingLife(trainData), engines=[1,2,3,4,5])
+# x = proc.getCorrelationHeatmap(trainData)
+# plt.show()
+print(proc.getStrongestCorrelations(trainData))
