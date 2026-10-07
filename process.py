@@ -111,3 +111,56 @@ def getStrongestCorrelations(data: pd.DataFrame):
     mask = np.triu(np.ones(corr.shape, dtype=bool), k=1)    # upper triangle, excluding the diagonal
     pairs = corr.where(mask).stack()                        # one row per unique pair
     return pairs.abs().sort_values(ascending=False).head(10)
+
+
+def lastCycle(data: pd.DataFrame, cap = 125):
+    temp = data.groupby("unit number").tail(1)
+    temp["error"] = (data["RUL_true"] - data["RUL_pred"])
+    return temp
+    
+def plotLastCyclePredictions(results: dict, cap: int = 125, ncols: int = 2):
+    """Predicted vs true RUL at each test engine's last cycle, one chart per model.
+
+    Points above the diagonal are over-predictions: the model thinks the engine
+    has more life left than it really does, which is the costly mistake.
+    """
+    rmse = lambda e: np.sqrt((e ** 2).mean())
+    n = len(results)
+    nrows = math.ceil(n / ncols)
+    fig, axes = plt.subplots(nrows, ncols, figsize=(5 * ncols, 5 * nrows),
+                            sharex=True, sharey=True, squeeze=False)
+    axes = axes.flat
+
+    for (name, df), ax in zip(results.items(), axes):
+        last = lastCycle(df, cap)
+        over = last["error"] > 0
+
+        # Shade the over-prediction region and draw the "perfect prediction" line
+        ax.fill_between([0, cap], [0, cap], cap * 1.15, color="tab:red", alpha=0.06)
+        ax.plot([0, cap], [0, cap], color="grey", linestyle="--", linewidth=1)
+
+        ax.scatter(last.loc[~over, "RUL_true"], last.loc[~over, "RUL_pred"],
+                s=18, color="tab:blue", label="Under-prediction (safe side)")
+        ax.scatter(last.loc[over, "RUL_true"], last.loc[over, "RUL_pred"],
+                s=18, color="tab:red", label="Over-prediction (risky)")
+
+        ax.set_title(f"{name}\nRMSE {rmse(last['error']):.1f} cycles, "
+                    f"{over.mean():.0%} over-predicted", fontsize=10)
+        ax.set_xlim(0, cap * 1.05)
+        ax.set_ylim(0, cap * 1.15)
+        ax.set_aspect("equal")
+
+    for ax in list(axes)[n:]:
+        ax.set_visible(False)
+
+    for ax in fig.axes:
+        if ax.get_visible():
+            ax.set_xlabel(f"True RUL (capped at {cap})", fontsize=9)
+            ax.set_ylabel("Predicted RUL", fontsize=9)
+            ax.tick_params(labelbottom=True, labelleft=True)
+
+    handles, labels = fig.axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=2, fontsize=9)
+    fig.suptitle("Predicted vs true remaining life at each test engine's last cycle", fontsize=12)
+    fig.tight_layout(rect=[0, 0.05, 1, 0.95])
+    return fig
