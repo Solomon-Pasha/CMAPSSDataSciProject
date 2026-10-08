@@ -115,8 +115,8 @@ def getStrongestCorrelations(data: pd.DataFrame):
 
 def lastCycle(data: pd.DataFrame, cap = 125):
     temp = data.groupby("unit number").tail(1).copy()
-    temp["RUL_true_capped"] = data["RUL_true"].clip(upper=cap)
-    temp["error"] = (temp["RUL_pred"] - temp["RUL_true"])
+    temp["RUL_true_capped"] = temp["RUL_true"].clip(upper=cap)
+    temp["error"] = (temp["RUL_pred"] - temp["RUL_true_capped"])
     return temp
     
 def plotLastCyclePredictions(results: dict, cap: int = 125, ncols: int = 2):
