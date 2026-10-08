@@ -22,11 +22,13 @@ Which clearly shows that variables 9 and 14 have a near correlation, meaning tha
 I decided to test out several different regression models here to see how they modelled the data differently. I have decided to test the model first using all available data and then using only the last 125 datapoints of each engine, this is to avoid confusing the model with large stretches of very similar data where the engine has yet to degrade, which means no information about how much longer it has left is being signalled. 
 
 I then used several scikit based models (Linear regression, Linear regression with PCA, Ridge Regression and Random forest) to try and predict the remaining turns based on the current turn without sensors 14 and 9 due to their inconsistency. I first used 5-fold cross validation to check the models on only the training data, getting the following data, the std was calculated with ddof=0 but ddof=1 may have been more appropriate given the small sample size:
-                 model       mean       std      fold1      fold2      fold3      fold4      fold5
-0           pureLinear  22.900115  1.457979  24.993081  22.799043  22.902990  20.445296  23.360163
-1      ridgeRegression  22.900086  1.459862  24.997095  22.800665  22.901625  20.442716  23.358331
-2  linearRegressionPCA  23.463256  1.534430  25.711958  23.488730  23.392046  20.898307  23.825240
-3         randomForest  21.370104  1.171591  22.849805  21.384305  21.779717  19.257756  21.578940
+
+| Model               | Mean  | Std  | Fold 1 | Fold 2 | Fold 3 | Fold 4 | Fold 5 |
+|:--------------------|------:|-----:|-------:|-------:|-------:|-------:|-------:|
+| pureLinear          | 22.90 | 1.46 | 24.99  | 22.80  | 22.90  | 20.45  | 23.36  |
+| ridgeRegression     | 22.90 | 1.46 | 25.00  | 22.80  | 22.90  | 20.44  | 23.36  |
+| linearRegressionPCA | 23.46 | 1.53 | 25.71  | 23.49  | 23.39  | 20.90  | 23.83  |
+| randomForest        | 21.37 | 1.17 | 22.85  | 21.38  | 21.78  | 19.26  | 21.58  |
 Where each value is in cycles based on RMSE. But later changed the data used to be based on a sliding window average from each row to make random noise less of a factor, producing the following results:
 [text](results/without_9_14/crossValidation.txt)
 Maintaing the gaps between them roughly while showing the biggest improvement on random forest, it is possible I could get better results by using more tree branches or reducing the probability of each column being counted on a split to less than one to make high variance variables less significant but I deemed that beyond the scope of the project.
