@@ -1,0 +1,6 @@
+| model               |   test_rmse |
+|:--------------------|------------:|
+| pureLinear          |     22.3423 |
+| ridgeRegression     |     22.3281 |
+| linearRegressionPCA |     22.0467 |
+| randomForest        |     21.3326 |

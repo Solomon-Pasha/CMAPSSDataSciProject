@@ -1,0 +1,26 @@
+|                      |         0 |
+|:---------------------|----------:|
+| operational setting3 | 0         |
+| sensor measurement1  | 0         |
+| sensor measurement19 | 0         |
+| sensor measurement5  | 0         |
+| sensor measurement18 | 0         |
+| sensor measurement16 | 0         |
+| sensor measurement10 | 0         |
+| operational setting2 | 0.0216789 |
+| operational setting1 | 0.0565233 |
+| sensor measurement6  | 0.432965  |
+| sensor measurement3  | 3.78462   |
+| sensor measurement17 | 4.1667    |
+| sensor measurement2  | 4.29032   |
+| sensor measurement21 | 4.49212   |
+| sensor measurement20 | 4.82127   |
+| sensor measurement15 | 4.9825    |
+| sensor measurement8  | 5.4515    |
+| sensor measurement13 | 5.59583   |
+| sensor measurement7  | 5.93512   |
+| sensor measurement4  | 6.23377   |
+| sensor measurement12 | 6.77755   |
+| sensor measurement11 | 7.51683   |
+| sensor measurement14 | 9.39988   |
+| sensor measurement9  | 9.6602    |

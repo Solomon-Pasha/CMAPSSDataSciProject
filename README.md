@@ -31,7 +31,7 @@ sensor measurement19,100.0,0.0,100.0,100.0,1,0.0
 sensor measurement20,38.8163,0.1807,38.14,39.43,120,0.0047
 sensor measurement21,23.2897,0.1083,22.8942,23.6184,4745,0.0046
 
-Due to this information and the folowing gathered from the drift_vs_noise function:
+Due to this information and the folowing gathered from the driftVsNoise function:
 operational setting3    0.000000
 sensor measurement1     0.000000
 sensor measurement19    0.000000
@@ -138,7 +138,9 @@ Showing a increase of about 0.9 cycles between the average error on training and
 
 To ensure the differences seen here weren't just flukes of the test set specifically used I checked the difference between real and predicted values over several thousand randomly picked rows and took the minimum and maximum over the middle 95%, this got me the following:
 Linear minus RF RMSE: 95% interval 2.07 to 2.51
-Which suggests the difference between predictions based on linear and random forest regression have a consistent and significant difference between them, as shown by the difference between max and min varying over only 0.5 cycles for the full run. In order to ensure I made the right decision in removing sensors 9 and 14 I decided to run the cross validation with them, to get a clear succinct impression of how they effect prediction accuracy:
+Which suggests the difference between predictions based on linear and random forest regression have a consistent and significant difference between them, as shown by the difference between max and min varying over only 0.5 cycles for the full run. 
+
+In order to ensure I made the right decision in removing sensors 9 and 14 I decided to run the cross validation with them, to get a clear succinct impression of how they effect prediction accuracy:
                  model       mean       std      fold1      fold2      fold3      fold4      fold5
 0           pureLinear  21.727878  1.435905  23.529543  21.542705  21.631661  19.255439  22.680040
 1      ridgeRegression  21.722279  1.436952  23.530030  21.542117  21.626127  19.247490  22.665630
